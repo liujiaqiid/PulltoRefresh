@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(this));
         final PullToRefreshLayout refreshLayout = (PullToRefreshLayout) findViewById(R.id.refresh);
+        refreshLayout.setHeadHeight(200);
         refreshLayout.setRefreshListener(new RefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i(TAG, "onRefresh: ");
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void finish() {
-                Log.i(TAG, "finish: ");
 
             }
         });

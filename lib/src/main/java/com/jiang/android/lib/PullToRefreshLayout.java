@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 public class PullToRefreshLayout extends LinearLayout {
 
     private static final long ANIM_TIME = 250;
-    private int hIGHER_HEAD_HEIGHT = 100;
+    private static int hIGHER_HEAD_HEIGHT = 100;
     private int HEIGHT;
     private int HEIGHT_2;
 
@@ -32,6 +32,30 @@ public class PullToRefreshLayout extends LinearLayout {
 
     public void setRefreshListener(RefreshListener refreshListener) {
         this.refreshListener = refreshListener;
+    }
+
+    /**
+     * 可在application配置高度
+     *
+     * @param height
+     */
+    public static void setHeadHeightCommon(int height) {
+        if (height > 0) {
+            hIGHER_HEAD_HEIGHT = height;
+        }
+    }
+
+    public void setHeadHeight(int height) {
+        if (height > 0) {
+            hIGHER_HEAD_HEIGHT = height;
+            cal();
+        }
+
+    }
+
+    private void cal() {
+        HEIGHT = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT);
+        HEIGHT_2 = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT * 2);
     }
 
     public PullToRefreshLayout(Context context) {
@@ -49,8 +73,7 @@ public class PullToRefreshLayout extends LinearLayout {
     }
 
     private void init() {
-        HEIGHT = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT);
-        HEIGHT_2 = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT * 2);
+        cal();
         int count = getChildCount();
         if (count != 1) {
             new IllegalArgumentException("child only can be one");
@@ -59,7 +82,6 @@ public class PullToRefreshLayout extends LinearLayout {
 
     public void setHeadView(BaseHeaderView view) {
         mHeadView = view;
-        invalidate();
     }
 
 
