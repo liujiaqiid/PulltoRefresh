@@ -49,7 +49,6 @@ public class PullToRefreshLayout extends LinearLayout {
     }
 
     private void init() {
-        setHeadView(new HeaderView(getContext()));
         HEIGHT = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT);
         HEIGHT_2 = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT * 2);
         int count = getChildCount();
@@ -76,6 +75,9 @@ public class PullToRefreshLayout extends LinearLayout {
     }
 
     private void addHeadView() {
+        if (mHeadView == null) {
+            setHeadView(new HeaderView(getContext()));
+        }
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         mHeadView.setLayoutParams(layoutParams);
         addView(mHeadView, 0);
