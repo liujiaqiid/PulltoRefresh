@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                         refreshLayout.setFinish();
 
                     }
-                }, 3000);
+                }, 2000);
 
             }
 
@@ -53,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
             public void finish() {
                 Log.i(TAG, "finish: ");
 
+            }
+        });
+
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.autoRefresh();
             }
         });
 
@@ -88,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mTV.setText("第"+position+"项");
+            holder.mTV.setText("第" + position + "项");
 
         }
 

@@ -5,13 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.view.View;
 
 /**
  * Created by jiang on 16/8/15.
  */
 
-public class HeaderView extends View implements HeadListener {
+public class HeaderView extends BaseHeaderView implements HeadListener {
 
     private Bitmap bitmap;
 

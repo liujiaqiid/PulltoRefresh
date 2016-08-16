@@ -17,11 +17,12 @@ import android.widget.LinearLayout;
 
 public class PullToRefreshLayout extends LinearLayout {
 
+    private static final long ANIM_TIME = 250;
     int hIGHER_HEAD_HEIGHT = 100;
     private int HEIGHT;
     private int HEIGHT_2;
 
-    private HeaderView mHeadView;
+    private BaseHeaderView mHeadView;
     private boolean isRefresh;
     private float mTouchY;
     private float mCurrentY;
@@ -57,7 +58,7 @@ public class PullToRefreshLayout extends LinearLayout {
         }
     }
 
-    public void setHeadView(HeaderView view) {
+    public void setHeadView(BaseHeaderView view) {
         mHeadView = view;
         invalidate();
     }
@@ -140,10 +141,20 @@ public class PullToRefreshLayout extends LinearLayout {
                     setFinish(dy1);
                     mHeadView.normal();
                 }
+                reset();
                 break;
         }
         return super.onTouchEvent(event);
 
+    }
+
+    /**
+     * 一次事件结束,还原所有的值
+     */
+    private void reset() {
+
+        mCurrentY = 0;
+        mTouchY = 0;
     }
 
     public boolean canChildScrollUp() {
@@ -164,9 +175,9 @@ public class PullToRefreshLayout extends LinearLayout {
         }
     }
 
-    public void createAnimatorTranslationY(final View v, final int max, final int purpose, final CallBack calllBack) {
-        final ValueAnimator anim = ValueAnimator.ofInt(max, purpose);
-        anim.setDuration(250);
+    public void createAnimatorTranslationY(final View v, final int start, final int purpose, final CallBack calllBack) {
+        final ValueAnimator anim = ValueAnimator.ofInt(start, purpose);
+        anim.setDuration(ANIM_TIME);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -184,8 +195,47 @@ public class PullToRefreshLayout extends LinearLayout {
         anim.start();
     }
 
+    public void createAutoAnimatorTranslationY(final View v, final int start, final int purpose, final CallBack calllBack) {
+        final ValueAnimator anim = ValueAnimator.ofInt(start, purpose);
+        anim.setDuration(ANIM_TIME);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int value = (int) valueAnimator.getAnimatedValue();
+                if (value == 0) {
+                    mHeadView.begin();
+                } else if (value == purpose) {
+                    mHeadView.loading();
+                    if (calllBack != null)
+                        calllBack.onSuccess();
+                } else {
+                    mHeadView.progress(start, purpose);
+                    v.getLayoutParams().height = value;
+                    v.requestLayout();
+                }
+            }
+
+        });
+        anim.start();
+    }
+
+
     public interface CallBack {
         void onSuccess();
+    }
+
+    public void autoRefresh() {
+        createAutoAnimatorTranslationY(mHeadView, 0, HEIGHT, new CallBack() {
+            @Override
+            public void onSuccess() {
+                mHeadView.getLayoutParams().height = HEIGHT;
+                isRefresh = true;
+                mHeadView.requestLayout();
+                if (refreshListener != null) {
+                    refreshListener.onRefresh();
+                }
+            }
+        });
     }
 
     public void setFinish(int height) {
