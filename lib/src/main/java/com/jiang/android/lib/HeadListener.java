@@ -13,9 +13,10 @@ public interface HeadListener {
 
 
     /**
-     * 下拉精度
+     * 回调的精度,单位为px
      *
-     * @param progress
+     * @param progress 当前高度
+     * @param all      总高度   为默认高度的2倍
      */
     public void progress(float progress, float all);
 

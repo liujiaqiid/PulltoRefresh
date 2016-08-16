@@ -246,7 +246,7 @@ public class PullToRefreshLayout extends LinearLayout {
                     mHeadView.getLayoutParams().height = purpose;
                     mHeadView.requestLayout();
                 } else {
-                    mHeadView.progress(start, purpose);
+                    mHeadView.progress(start, HEIGHT_2);
                     v.getLayoutParams().height = value;
                     v.requestLayout();
                 }
