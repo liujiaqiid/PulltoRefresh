@@ -56,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recyclerView.post(new Runnable() {
+        recyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 refreshLayout.autoRefresh();
             }
-        });
+        }, 3000);
 
 
     }

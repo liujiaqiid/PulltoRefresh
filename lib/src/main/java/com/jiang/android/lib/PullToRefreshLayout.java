@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 public class PullToRefreshLayout extends LinearLayout {
 
     private static final long ANIM_TIME = 250;
-    int hIGHER_HEAD_HEIGHT = 100;
+    private int hIGHER_HEAD_HEIGHT = 100;
     private int HEIGHT;
     private int HEIGHT_2;
 
@@ -66,10 +66,7 @@ public class PullToRefreshLayout extends LinearLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-
         mChildView = getChildAt(0);
-
         addHeadView();
 
     }
@@ -122,14 +119,10 @@ public class PullToRefreshLayout extends LinearLayout {
             case MotionEvent.ACTION_CANCEL:
                 float currentY = event.getY();
                 final int dy1 = (int) (currentY - mTouchY);
-
                 if (dy1 > HEIGHT) {
-
                     createAnimatorTranslationY(mHeadView, dy1 > HEIGHT_2 ? HEIGHT_2 : dy1, HEIGHT, new CallBack() {
                         @Override
                         public void onSuccess() {
-                            mHeadView.getLayoutParams().height = HEIGHT;
-                            mHeadView.requestLayout();
                             isRefresh = true;
                             if (refreshListener != null) {
                                 refreshListener.onRefresh();
@@ -177,6 +170,14 @@ public class PullToRefreshLayout extends LinearLayout {
         }
     }
 
+    /**
+     * 创建动画
+     *
+     * @param v
+     * @param start
+     * @param purpose
+     * @param calllBack
+     */
     public void createAnimatorTranslationY(final View v, final int start, final int purpose, final CallBack calllBack) {
         final ValueAnimator anim = ValueAnimator.ofInt(start, purpose);
         anim.setDuration(ANIM_TIME);
@@ -187,6 +188,8 @@ public class PullToRefreshLayout extends LinearLayout {
                 if (value == purpose) {
                     if (calllBack != null)
                         calllBack.onSuccess();
+                    mHeadView.getLayoutParams().height = purpose;
+                    mHeadView.requestLayout();
                 } else {
                     v.getLayoutParams().height = value;
                     v.requestLayout();
@@ -197,6 +200,14 @@ public class PullToRefreshLayout extends LinearLayout {
         anim.start();
     }
 
+    /**
+     * 用于自动刷新的动画
+     *
+     * @param v
+     * @param start
+     * @param purpose
+     * @param calllBack
+     */
     public void createAutoAnimatorTranslationY(final View v, final int start, final int purpose, final CallBack calllBack) {
         final ValueAnimator anim = ValueAnimator.ofInt(start, purpose);
         anim.setDuration(ANIM_TIME);
@@ -210,6 +221,8 @@ public class PullToRefreshLayout extends LinearLayout {
                     mHeadView.loading();
                     if (calllBack != null)
                         calllBack.onSuccess();
+                    mHeadView.getLayoutParams().height = purpose;
+                    mHeadView.requestLayout();
                 } else {
                     mHeadView.progress(start, purpose);
                     v.getLayoutParams().height = value;
@@ -226,13 +239,14 @@ public class PullToRefreshLayout extends LinearLayout {
         void onSuccess();
     }
 
+    /**
+     * 自动下拉刷新
+     */
     public void autoRefresh() {
         createAutoAnimatorTranslationY(mHeadView, 0, HEIGHT, new CallBack() {
             @Override
             public void onSuccess() {
-                mHeadView.getLayoutParams().height = HEIGHT;
                 isRefresh = true;
-                mHeadView.requestLayout();
                 if (refreshListener != null) {
                     refreshListener.onRefresh();
                 }
@@ -240,14 +254,17 @@ public class PullToRefreshLayout extends LinearLayout {
         });
     }
 
+    /**
+     * 结束下拉刷新
+     *
+     * @param height
+     */
     public void setFinish(int height) {
 
         createAnimatorTranslationY(mHeadView, height, 0, new CallBack() {
             @Override
             public void onSuccess() {
-                mHeadView.getLayoutParams().height = 0;
                 isRefresh = false;
-                mHeadView.requestLayout();
                 if (refreshListener != null) {
                     refreshListener.finish();
                 }
@@ -257,6 +274,9 @@ public class PullToRefreshLayout extends LinearLayout {
 
     }
 
+    /**
+     * 结束下拉刷新
+     */
     public void setFinish() {
         setFinish(HEIGHT);
     }
