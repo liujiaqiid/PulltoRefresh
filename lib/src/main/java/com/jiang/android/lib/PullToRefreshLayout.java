@@ -34,17 +34,6 @@ public class PullToRefreshLayout extends LinearLayout {
         this.refreshListener = refreshListener;
     }
 
-    /**
-     * 可在application配置高度
-     *
-     * @param height
-     */
-    public static void setHeadHeightCommon(int height) {
-        if (height > 0) {
-            hIGHER_HEAD_HEIGHT = height;
-        }
-    }
-
     public void setHeadHeight(int height) {
         if (height > 0) {
             hIGHER_HEAD_HEIGHT = height;
@@ -169,7 +158,6 @@ public class PullToRefreshLayout extends LinearLayout {
      * 一次事件结束,还原所有的值
      */
     private void reset() {
-
         mCurrentY = 0;
         mTouchY = 0;
     }
