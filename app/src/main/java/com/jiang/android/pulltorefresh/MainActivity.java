@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         final PullToRefreshLayout refreshLayout = (PullToRefreshLayout) findViewById(R.id.refresh);
         refreshLayout.setRefreshListener(new RefreshListener() {
             @Override
-            public void onRefresh() {
+            public void refresh() {
+                Log.i(TAG, "refresh: ");
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -48,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLoadMore() {
+            public void loadMore() {
+                Log.i(TAG, "loadMore: ");
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -59,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFinishLoadMore() {
+            public void finishLoadMore() {
 
+                Log.i(TAG, "finishLoadMore: ");
             }
 
             @Override
             public void finish() {
+                Log.i(TAG, "finish: ");
 
             }
         });

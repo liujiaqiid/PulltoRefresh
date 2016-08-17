@@ -8,7 +8,7 @@ import android.view.View;
  * Created by jiang on 16/8/16.
  */
 
-public abstract class BaseView extends View implements HeadListener {
+public abstract class BaseView extends View implements HeadFootListener {
     public BaseView(Context context) {
         super(context);
     }
@@ -20,4 +20,6 @@ public abstract class BaseView extends View implements HeadListener {
     public BaseView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
+
+     static final String TAG = "BaseView";
 }

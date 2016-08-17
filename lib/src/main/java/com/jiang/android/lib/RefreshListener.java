@@ -6,10 +6,25 @@ package com.jiang.android.lib;
 
 public interface RefreshListener {
 
-    void onRefresh();
-    void onLoadMore();
-    void onFinishLoadMore();
+    /**
+     * 刷新
+     */
+    void refresh();
 
+    /**
+     * 加载更多
+     */
+    void loadMore();
+
+    /**
+     * 完成刷新
+     */
     void finish();
+
+    /**
+     * 完成加载更多
+     */
+    void finishLoadMore();
+
 
 }

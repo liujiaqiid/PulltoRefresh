@@ -98,7 +98,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     private void addHeadView() {
         if (mHeadView == null) {
-            setHeadView(new HeadView(getContext()));
+            setHeadView(new HeadFootView(getContext()));
         }
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         mHeadView.setLayoutParams(layoutParams);
@@ -109,7 +109,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        //   if (isRefresh || isLoadMore) return false;
+        if (isRefresh || isLoadMore) return true;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mTouchY = ev.getY();
@@ -138,7 +138,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // if (isRefresh || isLoadMore) return false;
+        if (isRefresh || isLoadMore) return true;
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 mCurrentY = event.getY();
@@ -170,7 +170,7 @@ public class PullToRefreshLayout extends FrameLayout {
                         public void onSuccess() {
                             isRefresh = true;
                             if (refreshListener != null) {
-                                refreshListener.onRefresh();
+                                refreshListener.refresh();
                             }
                             mHeadView.loading();
                         }
@@ -187,7 +187,7 @@ public class PullToRefreshLayout extends FrameLayout {
                             public void onSuccess() {
                                 isLoadMore = true;
                                 if (refreshListener != null) {
-                                    refreshListener.onLoadMore();
+                                    refreshListener.loadMore();
                                 }
                                 mFootView.loading();
                             }
@@ -264,20 +264,27 @@ public class PullToRefreshLayout extends FrameLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int value = (int) valueAnimator.getAnimatedValue();
+
+                if (state == State.REFRESH) {
+                    mHeadView.getLayoutParams().height = value;
+                    ViewCompat.setTranslationY(mChildView, value);
+                    if (purpose == 0) { //代表结束加载
+                        mHeadView.finishing(value, HEIGHT_2);
+                    } else {
+                        mHeadView.progress(value, HEIGHT_2);
+                    }
+                } else {
+                    mFootView.getLayoutParams().height = value;
+                    ViewCompat.setTranslationY(mChildView, -value);
+                    if (purpose == 0) { //代表结束加载
+                        mFootView.finishing(value, HEIGHT_2);
+                    } else {
+                        mFootView.progress(value, FOO_HEIGHT_2);
+                    }
+                }
                 if (value == purpose) {
                     if (calllBack != null)
                         calllBack.onSuccess();
-                } else {
-                    if (state == State.REFRESH) {
-                        mHeadView.getLayoutParams().height = value;
-                        ViewCompat.setTranslationY(mChildView, value);
-                        mHeadView.progress(start, HEIGHT_2);
-                    } else {
-                        mFootView.getLayoutParams().height = value;
-                        ViewCompat.setTranslationY(mChildView, -value);
-                        mFootView.progress(start, FOO_HEIGHT_2);
-
-                    }
                 }
                 requestLayout();
 
@@ -313,7 +320,7 @@ public class PullToRefreshLayout extends FrameLayout {
                     if (calllBack != null)
                         calllBack.onSuccess();
                 } else {
-                    mHeadView.progress(start, HEIGHT_2);
+                    mHeadView.progress(value, HEIGHT_2);
                 }
 
             }
@@ -322,10 +329,6 @@ public class PullToRefreshLayout extends FrameLayout {
         anim.start();
     }
 
-
-    public interface CallBack {
-        void onSuccess();
-    }
 
     /**
      * 自动下拉刷新
@@ -336,7 +339,7 @@ public class PullToRefreshLayout extends FrameLayout {
             public void onSuccess() {
                 isRefresh = true;
                 if (refreshListener != null) {
-                    refreshListener.onRefresh();
+                    refreshListener.refresh();
                 }
             }
         });
@@ -357,7 +360,7 @@ public class PullToRefreshLayout extends FrameLayout {
                 } else {
                     isLoadMore = false;
                     if (refreshListener != null) {
-                        refreshListener.onFinishLoadMore();
+                        refreshListener.finishLoadMore();
                     }
                 }
             }
@@ -374,5 +377,8 @@ public class PullToRefreshLayout extends FrameLayout {
         setFinish(height, state);
     }
 
+    public interface CallBack {
+        void onSuccess();
+    }
 
 }
