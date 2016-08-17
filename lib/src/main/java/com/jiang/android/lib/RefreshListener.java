@@ -7,6 +7,8 @@ package com.jiang.android.lib;
 public interface RefreshListener {
 
     void onRefresh();
+    void onLoadMore();
+    void onFinishLoadMore();
 
     void finish();
 

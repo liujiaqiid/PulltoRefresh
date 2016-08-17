@@ -5,25 +5,31 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 /**
  * Created by jiang on 16/8/15.
  */
 
-public class PullToRefreshLayout extends LinearLayout {
+public class PullToRefreshLayout extends FrameLayout {
 
     private static final long ANIM_TIME = 250;
     private static int hIGHER_HEAD_HEIGHT = 100;
+    private static int FOOTER_HEIGHT = 100;
     private int HEIGHT;
     private int HEIGHT_2;
+    private int FOO_HEIGHT;
+    private int FOO_HEIGHT_2;
 
-    private BaseHeaderView mHeadView;
+    private BaseView mHeadView;
+    private BaseView mFootView;
     private boolean isRefresh;
+    private boolean isLoadMore;
     private float mTouchY;
     private float mCurrentY;
     private View mChildView;
@@ -44,7 +50,9 @@ public class PullToRefreshLayout extends LinearLayout {
 
     private void cal() {
         HEIGHT = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT);
+        FOO_HEIGHT = Utils.Dp2Px(getContext(), FOOTER_HEIGHT);
         HEIGHT_2 = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT * 2);
+        FOO_HEIGHT_2 = Utils.Dp2Px(getContext(), FOOTER_HEIGHT * 2);
     }
 
     public PullToRefreshLayout(Context context) {
@@ -57,7 +65,6 @@ public class PullToRefreshLayout extends LinearLayout {
 
     public PullToRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setOrientation(VERTICAL);
         init();
     }
 
@@ -69,22 +76,35 @@ public class PullToRefreshLayout extends LinearLayout {
         }
     }
 
-    public void setHeadView(BaseHeaderView view) {
+    public void setHeadView(BaseView view) {
         mHeadView = view;
     }
 
+    public void setFootView(BaseView view) {
+        mFootView = view;
+    }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mChildView = getChildAt(0);
         addHeadView();
+        //addFootView();
 
+    }
+
+    private void addFootView() {
+        if (mFootView == null) {
+            setFootView(new FooterView(getContext()));
+        }
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, FOO_HEIGHT);
+        mFootView.setLayoutParams(layoutParams);
+        addView(mFootView);
     }
 
     private void addHeadView() {
         if (mHeadView == null) {
-            setHeadView(new HeaderView(getContext()));
+            setHeadView(new HeadView(getContext()));
         }
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         mHeadView.setLayoutParams(layoutParams);
@@ -92,9 +112,10 @@ public class PullToRefreshLayout extends LinearLayout {
 
     }
 
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (isRefresh) return false;
+        if (isRefresh || isLoadMore) return false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mTouchY = ev.getY();
@@ -108,30 +129,51 @@ public class PullToRefreshLayout extends LinearLayout {
                     mHeadView.begin();
                     return true;
                 }
+//                boolean canChildScrollDown = canChildScrollDown();
+//                if (dy < 0 && !canChildScrollDown) {
+//                    mFootView.begin();
+//                    Log.i(TAG, "onInterceptTouchEvent: start loadmore");
+//                    return true;
+//                }
+
+
         }
 
         return super.onInterceptTouchEvent(ev);
     }
 
+    private static final String TAG = "PullToRefreshLayout";
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isRefresh) return false;
+        if (isRefresh || isLoadMore) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 mCurrentY = event.getY();
                 float dura = mCurrentY - mTouchY;
-                dura = Math.min(HEIGHT_2, dura);
-                dura = Math.max(0, dura);
-                mHeadView.getLayoutParams().height = (int) dura;
-                mHeadView.requestLayout();
-                mHeadView.progress(dura, HEIGHT_2);
+                if (dura > 0) {
+                    dura = Math.min(HEIGHT_2, dura);
+                    dura = Math.max(0, dura);
+                    mHeadView.getLayoutParams().height = (int) dura;
+                    ViewCompat.setTranslationY(mChildView, dura);
+                    requestLayout();
+                    mHeadView.progress(dura, HEIGHT_2);
+                } else {
+                    dura = Math.min(FOO_HEIGHT_2, Math.abs(dura));
+                    dura = Math.max(0, Math.abs(dura));
+                    mFootView.getLayoutParams().height = Math.abs((int) dura);
+                    requestLayout();
+                    mFootView.progress(dura, FOO_HEIGHT_2);
+                    Log.i(TAG, "onTouchEvent: mFootView height " + mFootView.getLayoutParams().height);
+
+                }
                 return true;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 float currentY = event.getY();
                 final int dy1 = (int) (currentY - mTouchY);
-                if (dy1 > HEIGHT) {
-                    createAnimatorTranslationY(mHeadView, dy1 > HEIGHT_2 ? HEIGHT_2 : dy1, HEIGHT, new CallBack() {
+                if (dy1 >= HEIGHT) {
+                    createAnimatorTranslationY(mHeadView, dy1 > HEIGHT_2 ? HEIGHT_2 : dy1, HEIGHT, HEIGHT_2, new CallBack() {
                         @Override
                         public void onSuccess() {
                             isRefresh = true;
@@ -143,9 +185,26 @@ public class PullToRefreshLayout extends LinearLayout {
                     });
 
 
-                } else {
-                    setFinish(dy1);
+                } else if (dy1 > 0 && dy1 < HEIGHT) {
+                    setFinish(dy1, State.REFRESH);
                     mHeadView.normal();
+                } else if (dy1 < 0) {
+                    if (Math.abs(dy1) >= FOO_HEIGHT) {
+                        createAnimatorTranslationY(mFootView, Math.abs(dy1) > FOO_HEIGHT_2 ? FOO_HEIGHT_2 : Math.abs(dy1), FOO_HEIGHT_2, FOO_HEIGHT, new CallBack() {
+                            @Override
+                            public void onSuccess() {
+                                isLoadMore = true;
+                                if (refreshListener != null) {
+                                    refreshListener.onLoadMore();
+                                }
+                                mFootView.loading();
+                            }
+                        });
+
+                    } else {
+                        setFinish(Math.abs(dy1), State.LOADMORE);
+                        mFootView.normal();
+                    }
                 }
                 reset();
                 break;
@@ -180,6 +239,28 @@ public class PullToRefreshLayout extends LinearLayout {
         }
     }
 
+    public boolean canChildScrollDown() {
+        if (mChildView == null) {
+            return false;
+        }
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (mChildView instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) mChildView;
+                if (absListView.getChildCount() > 0) {
+                    int lastChildBottom = absListView.getChildAt(absListView.getChildCount() - 1).getBottom();
+                    return absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1 && lastChildBottom <= absListView.getMeasuredHeight();
+                } else {
+                    return false;
+                }
+
+            } else {
+                return ViewCompat.canScrollVertically(mChildView, 1) || mChildView.getScrollY() > 0;
+            }
+        } else {
+            return ViewCompat.canScrollVertically(mChildView, 1);
+        }
+    }
+
     /**
      * 创建动画
      *
@@ -188,21 +269,22 @@ public class PullToRefreshLayout extends LinearLayout {
      * @param purpose
      * @param calllBack
      */
-    public void createAnimatorTranslationY(final View v, final int start, final int purpose, final CallBack calllBack) {
+    public void createAnimatorTranslationY(final BaseView v, final int start, final int purpose, final int max, final CallBack calllBack) {
         final ValueAnimator anim = ValueAnimator.ofInt(start, purpose);
         anim.setDuration(ANIM_TIME);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int value = (int) valueAnimator.getAnimatedValue();
+                v.getLayoutParams().height = value;
+                ViewCompat.setTranslationY(mChildView, value);
+                requestLayout();
                 if (value == purpose) {
                     if (calllBack != null)
                         calllBack.onSuccess();
-                    mHeadView.getLayoutParams().height = purpose;
-                    mHeadView.requestLayout();
                 } else {
-                    v.getLayoutParams().height = value;
-                    v.requestLayout();
+                    v.progress(start, max);
+
                 }
             }
 
@@ -225,19 +307,19 @@ public class PullToRefreshLayout extends LinearLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int value = (int) valueAnimator.getAnimatedValue();
+                v.getLayoutParams().height = value;
+                ViewCompat.setTranslationY(mChildView, value);
+                requestLayout();
                 if (value == 0) {
                     mHeadView.begin();
                 } else if (value == purpose) {
                     mHeadView.loading();
                     if (calllBack != null)
                         calllBack.onSuccess();
-                    mHeadView.getLayoutParams().height = purpose;
-                    mHeadView.requestLayout();
                 } else {
                     mHeadView.progress(start, HEIGHT_2);
-                    v.getLayoutParams().height = value;
-                    v.requestLayout();
                 }
+
             }
 
         });
@@ -269,25 +351,38 @@ public class PullToRefreshLayout extends LinearLayout {
      *
      * @param height
      */
-    public void setFinish(int height) {
+    public void setFinish(int height, @State.REFRESH_STATE int state) {
 
-        createAnimatorTranslationY(mHeadView, height, 0, new CallBack() {
-            @Override
-            public void onSuccess() {
-                isRefresh = false;
-                if (refreshListener != null) {
-                    refreshListener.finish();
+        if (state == State.REFRESH) {
+            createAnimatorTranslationY(mHeadView, height, 0, HEIGHT_2, new CallBack() {
+                @Override
+                public void onSuccess() {
+                    isRefresh = false;
+                    if (refreshListener != null) {
+                        refreshListener.finish();
+                    }
                 }
-            }
-        });
-
+            });
+        } else {
+            createAnimatorTranslationY(mFootView, height, 0, FOO_HEIGHT_2, new CallBack() {
+                @Override
+                public void onSuccess() {
+                    isLoadMore = false;
+                    if (refreshListener != null) {
+                        refreshListener.onFinishLoadMore();
+                    }
+                }
+            });
+        }
 
     }
 
     /**
      * 结束下拉刷新
      */
-    public void setFinish() {
-        setFinish(HEIGHT);
+    public void setFinish(@State.REFRESH_STATE int state) {
+
+        setFinish(HEIGHT, state);
+
     }
 }

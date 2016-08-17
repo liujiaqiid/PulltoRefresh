@@ -7,22 +7,22 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 
 /**
- * Created by jiang on 16/8/15.
+ * Created by jiang on 16/8/17.
  */
 
-public class HeaderView extends BaseHeaderView implements HeadListener {
+public class FooterView extends BaseView {
 
     private Bitmap bitmap;
 
-    public HeaderView(Context context) {
+    public FooterView(Context context) {
         this(context, null);
     }
 
-    public HeaderView(Context context, AttributeSet attrs) {
+    public FooterView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public HeaderView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FooterView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -30,7 +30,6 @@ public class HeaderView extends BaseHeaderView implements HeadListener {
     private void init() {
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dd);
     }
-
 
 
     @Override
@@ -56,6 +55,4 @@ public class HeaderView extends BaseHeaderView implements HeadListener {
     public void normal() {
 
     }
-
-
 }

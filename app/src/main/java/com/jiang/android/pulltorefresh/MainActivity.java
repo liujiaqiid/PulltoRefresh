@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.jiang.android.lib.PullToRefreshLayout;
 import com.jiang.android.lib.RefreshListener;
+import com.jiang.android.lib.State;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,10 +40,26 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        refreshLayout.setFinish();
+                        refreshLayout.setFinish(State.REFRESH);
 
                     }
                 }, 2000);
+
+            }
+
+            @Override
+            public void onLoadMore() {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.setFinish(State.LOADMORE);
+
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onFinishLoadMore() {
 
             }
 
