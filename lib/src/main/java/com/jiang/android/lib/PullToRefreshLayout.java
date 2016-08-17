@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,13 +40,6 @@ public class PullToRefreshLayout extends FrameLayout {
         this.refreshListener = refreshListener;
     }
 
-    public void setHeadHeight(int height) {
-        if (height > 0) {
-            hIGHER_HEAD_HEIGHT = height;
-            cal();
-        }
-
-    }
 
     private void cal() {
         HEIGHT = Utils.Dp2Px(getContext(), hIGHER_HEAD_HEIGHT);
@@ -89,7 +82,7 @@ public class PullToRefreshLayout extends FrameLayout {
         super.onAttachedToWindow();
         mChildView = getChildAt(0);
         addHeadView();
-        //addFootView();
+        addFootView();
 
     }
 
@@ -97,7 +90,8 @@ public class PullToRefreshLayout extends FrameLayout {
         if (mFootView == null) {
             setFootView(new FooterView(getContext()));
         }
-        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, FOO_HEIGHT);
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        layoutParams.gravity = Gravity.BOTTOM;
         mFootView.setLayoutParams(layoutParams);
         addView(mFootView);
     }
@@ -115,7 +109,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (isRefresh || isLoadMore) return false;
+        //   if (isRefresh || isLoadMore) return false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mTouchY = ev.getY();
@@ -129,12 +123,11 @@ public class PullToRefreshLayout extends FrameLayout {
                     mHeadView.begin();
                     return true;
                 }
-//                boolean canChildScrollDown = canChildScrollDown();
-//                if (dy < 0 && !canChildScrollDown) {
-//                    mFootView.begin();
-//                    Log.i(TAG, "onInterceptTouchEvent: start loadmore");
-//                    return true;
-//                }
+                boolean canChildScrollDown = canChildScrollDown();
+                if (dy < 0 && !canChildScrollDown) {
+                    mFootView.begin();
+                    return true;
+                }
 
 
         }
@@ -142,11 +135,10 @@ public class PullToRefreshLayout extends FrameLayout {
         return super.onInterceptTouchEvent(ev);
     }
 
-    private static final String TAG = "PullToRefreshLayout";
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isRefresh || isLoadMore) return false;
+        // if (isRefresh || isLoadMore) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 mCurrentY = event.getY();
@@ -161,10 +153,10 @@ public class PullToRefreshLayout extends FrameLayout {
                 } else {
                     dura = Math.min(FOO_HEIGHT_2, Math.abs(dura));
                     dura = Math.max(0, Math.abs(dura));
-                    mFootView.getLayoutParams().height = Math.abs((int) dura);
+                    mFootView.getLayoutParams().height = (int) dura;
+                    ViewCompat.setTranslationY(mChildView, -dura);
                     requestLayout();
                     mFootView.progress(dura, FOO_HEIGHT_2);
-                    Log.i(TAG, "onTouchEvent: mFootView height " + mFootView.getLayoutParams().height);
 
                 }
                 return true;
@@ -173,7 +165,7 @@ public class PullToRefreshLayout extends FrameLayout {
                 float currentY = event.getY();
                 final int dy1 = (int) (currentY - mTouchY);
                 if (dy1 >= HEIGHT) {
-                    createAnimatorTranslationY(mHeadView, dy1 > HEIGHT_2 ? HEIGHT_2 : dy1, HEIGHT, HEIGHT_2, new CallBack() {
+                    createAnimatorTranslationY(State.REFRESH, dy1 > HEIGHT_2 ? HEIGHT_2 : dy1, HEIGHT, new CallBack() {
                         @Override
                         public void onSuccess() {
                             isRefresh = true;
@@ -190,7 +182,7 @@ public class PullToRefreshLayout extends FrameLayout {
                     mHeadView.normal();
                 } else if (dy1 < 0) {
                     if (Math.abs(dy1) >= FOO_HEIGHT) {
-                        createAnimatorTranslationY(mFootView, Math.abs(dy1) > FOO_HEIGHT_2 ? FOO_HEIGHT_2 : Math.abs(dy1), FOO_HEIGHT_2, FOO_HEIGHT, new CallBack() {
+                        createAnimatorTranslationY(State.LOADMORE, Math.abs(dy1) > FOO_HEIGHT_2 ? FOO_HEIGHT_2 : Math.abs(dy1), FOO_HEIGHT, new CallBack() {
                             @Override
                             public void onSuccess() {
                                 isLoadMore = true;
@@ -263,29 +255,33 @@ public class PullToRefreshLayout extends FrameLayout {
 
     /**
      * 创建动画
-     *
-     * @param v
-     * @param start
-     * @param purpose
-     * @param calllBack
      */
-    public void createAnimatorTranslationY(final BaseView v, final int start, final int purpose, final int max, final CallBack calllBack) {
-        final ValueAnimator anim = ValueAnimator.ofInt(start, purpose);
+    public void createAnimatorTranslationY(@State.REFRESH_STATE final int state, final int start, final int purpose, final CallBack calllBack) {
+        final ValueAnimator anim;
+        anim = ValueAnimator.ofInt(start, purpose);
         anim.setDuration(ANIM_TIME);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int value = (int) valueAnimator.getAnimatedValue();
-                v.getLayoutParams().height = value;
-                ViewCompat.setTranslationY(mChildView, value);
-                requestLayout();
                 if (value == purpose) {
                     if (calllBack != null)
                         calllBack.onSuccess();
                 } else {
-                    v.progress(start, max);
+                    if (state == State.REFRESH) {
+                        mHeadView.getLayoutParams().height = value;
+                        ViewCompat.setTranslationY(mChildView, value);
+                        mHeadView.progress(start, HEIGHT_2);
+                    } else {
+                        mFootView.getLayoutParams().height = value;
+                        ViewCompat.setTranslationY(mChildView, -value);
+                        mFootView.progress(start, FOO_HEIGHT_2);
 
+                    }
                 }
+                requestLayout();
+
+
             }
 
         });
@@ -348,41 +344,35 @@ public class PullToRefreshLayout extends FrameLayout {
 
     /**
      * 结束下拉刷新
-     *
-     * @param height
      */
-    public void setFinish(int height, @State.REFRESH_STATE int state) {
-
-        if (state == State.REFRESH) {
-            createAnimatorTranslationY(mHeadView, height, 0, HEIGHT_2, new CallBack() {
-                @Override
-                public void onSuccess() {
+    public void setFinish(int height, @State.REFRESH_STATE final int state) {
+        createAnimatorTranslationY(state, height, 0, new CallBack() {
+            @Override
+            public void onSuccess() {
+                if (state == State.REFRESH) {
                     isRefresh = false;
                     if (refreshListener != null) {
                         refreshListener.finish();
                     }
-                }
-            });
-        } else {
-            createAnimatorTranslationY(mFootView, height, 0, FOO_HEIGHT_2, new CallBack() {
-                @Override
-                public void onSuccess() {
+                } else {
                     isLoadMore = false;
                     if (refreshListener != null) {
                         refreshListener.onFinishLoadMore();
                     }
                 }
-            });
-        }
-
+            }
+        });
     }
 
-    /**
-     * 结束下拉刷新
-     */
     public void setFinish(@State.REFRESH_STATE int state) {
-
-        setFinish(HEIGHT, state);
-
+        int height;
+        if (state == State.REFRESH) {
+            height = HEIGHT;
+        } else {
+            height = FOO_HEIGHT;
+        }
+        setFinish(height, state);
     }
+
+
 }
