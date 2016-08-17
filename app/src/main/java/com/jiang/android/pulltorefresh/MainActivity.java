@@ -1,13 +1,11 @@
 package com.jiang.android.pulltorefresh;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(this));
+        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter());
         final PullToRefreshLayout refreshLayout = (PullToRefreshLayout) findViewById(R.id.refresh);
-        refreshLayout.setHeadHeight(200);
         refreshLayout.setRefreshListener(new RefreshListener() {
             @Override
             public void onRefresh() {
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 refreshLayout.autoRefresh();
             }
-        }, 3000);
+        }, 500);
 
 
     }
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public SimpleStringRecyclerViewAdapter(Context context) {
+        public SimpleStringRecyclerViewAdapter() {
             super();
         }
 
