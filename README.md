@@ -28,6 +28,7 @@ Step 2. Add the dependency
 
 
 ###说明:
+>* 0.图片截取自饿了吗app,如有侵权,请联系删除
 >* 1.继承BaseView 并重写相关方法可实现各种效果。可在PullToRefreshLayout的实例调用setHeadView();setFootView()
 >* 2.可以通过配置高度来决定Head或者Foot的高度。
 ```
@@ -53,6 +54,23 @@ Step 2. Add the dependency
     void normal();  //表示加载完成,或者没有任何操作的时候
 ```
 
+
+
+### License
+
+    Copyright 2016 NewTab
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 
 
