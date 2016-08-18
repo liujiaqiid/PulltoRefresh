@@ -28,10 +28,13 @@ Step 2. Add the dependency
 
 
 ###说明:
->* 1.继承BaseView 并重写相关方法可实现各种效果。
+>* 1.继承BaseView 并重写相关方法可实现各种效果。可在PullToRefreshLayout的实例调用setHeadView();setFootView()
 >* 2.可以通过配置高度来决定Head或者Foot的高度。
 ```
  PullToRefreshLayout.setHeight(100);
         PullToRefreshLayout.setFoot(100);
 ```
 >* 3.通过setRefresh(boolean); 和 setLoadMore(boolean); 来控制是否可以刷新和加载更多
+>* 4.理论上支持各种Layout,亲测RecyclerView和ListView
+>* 5.调用autoRefresh(); 可自动下拉刷新
+>* 6.minSdkVersion -> 15

@@ -2,14 +2,12 @@ package com.jiang.android.lib;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
 /**
@@ -252,40 +250,42 @@ public class PullToRefreshLayout extends FrameLayout {
         if (mChildView == null) {
             return false;
         }
-        if (Build.VERSION.SDK_INT < 14) {
-            if (mChildView instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mChildView;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                        .getTop() < absListView.getPaddingTop());
-            } else {
-                return ViewCompat.canScrollVertically(mChildView, -1) || mChildView.getScrollY() > 0;
-            }
-        } else {
-            return ViewCompat.canScrollVertically(mChildView, -1);
-        }
+        return ViewCompat.canScrollVertically(mChildView, -1);
+//        if (Build.VERSION.SDK_INT < 14) {
+//            if (mChildView instanceof AbsListView) {
+//                final AbsListView absListView = (AbsListView) mChildView;
+//                return absListView.getChildCount() > 0
+//                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
+//                        .getTop() < absListView.getPaddingTop());
+//            } else {
+//                return ViewCompat.canScrollVertically(mChildView, -1) || mChildView.getScrollY() > 0;
+//            }
+//        } else {
+//        return ViewCompat.canScrollVertically(mChildView, -1);
+//        }
     }
 
     public boolean canChildScrollDown() {
         if (mChildView == null) {
             return false;
         }
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mChildView instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mChildView;
-                if (absListView.getChildCount() > 0) {
-                    int lastChildBottom = absListView.getChildAt(absListView.getChildCount() - 1).getBottom();
-                    return absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1 && lastChildBottom <= absListView.getMeasuredHeight();
-                } else {
-                    return false;
-                }
-
-            } else {
-                return ViewCompat.canScrollVertically(mChildView, 1) || mChildView.getScrollY() > 0;
-            }
-        } else {
-            return ViewCompat.canScrollVertically(mChildView, 1);
-        }
+        return ViewCompat.canScrollVertically(mChildView, 1);
+//        if (android.os.Build.VERSION.SDK_INT < 14) {
+//            if (mChildView instanceof AbsListView) {
+//                final AbsListView absListView = (AbsListView) mChildView;
+//                if (absListView.getChildCount() > 0) {
+//                    int lastChildBottom = absListView.getChildAt(absListView.getChildCount() - 1).getBottom();
+//                    return absListView.getLastVisiblePosition() == absListView.getAdapter().getCount() - 1 && lastChildBottom <= absListView.getMeasuredHeight();
+//                } else {
+//                    return false;
+//                }
+//
+//            } else {
+//                return ViewCompat.canScrollVertically(mChildView, 1) || mChildView.getScrollY() > 0;
+//            }
+//        } else {
+//        return ViewCompat.canScrollVertically(mChildView, 1);
+//        }
     }
 
     /**
