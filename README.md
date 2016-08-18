@@ -38,6 +38,7 @@ Step 2. Add the dependency
 >* 3.通过setRefresh(boolean); 和 setLoadMore(boolean); 来控制是否可以刷新和加载更多
 >* 4.调用autoRefresh(); 可自动下拉刷新
 >* 5.minSdkVersion -> 15
+>* 6.理论上支持大部分常用布局,亲测(RecyclerView,ListView)
 
 ###如何定制Head和Foot样式
 
