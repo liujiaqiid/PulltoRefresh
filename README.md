@@ -41,9 +41,9 @@ Step 2. Add the dependency
 
 ###如何定制Head和Foot样式
 
-1.直接把项目下载下来。 <br />
-2.自定义类继承BaseView,然后重写相关的方法,接着在可在PullToRefreshLayout的实例中调用setHeadView()或者setFootView(),如果把项目下载下来的话,可以直接替换库中的相关view
-3.BaseView中需要重写的方法的相关说明:
+1.直接把项目下载下来。 <br /><br />
+2.自定义类继承BaseView,然后重写相关的方法,接着在可在PullToRefreshLayout的实例中调用setHeadView()或者setFootView(),如果把项目下载下来的话,可以直接替换库中的相关view <br /><br />
+3.BaseView中需要重写的方法的相关说明: <br /><br />
 ```
     //注:里面用到的单位都是px
     void begin(); //表示开始滑动
