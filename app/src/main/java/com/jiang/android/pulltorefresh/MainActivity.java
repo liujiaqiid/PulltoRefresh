@@ -1,6 +1,5 @@
 package com.jiang.android.pulltorefresh;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshLayout.setFinish(State.REFRESH);
-                        refreshLayout.setFinish(State.LOADMORE);
 
 
                     }
@@ -60,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        refreshLayout.setFinish(State.REFRESH);
                         refreshLayout.setFinish(State.LOADMORE);
                     }
                 }, 2000);
@@ -139,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startActivity() {
-        startActivity(new Intent(this, Main2Activity.class));
+       // startActivity(new Intent(this, Main2Activity.class));
 
     }
 }
