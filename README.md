@@ -36,9 +36,8 @@ Step 2. Add the dependency
         PullToRefreshLayout.setFoot(100);
 ```
 >* 3.通过setRefresh(boolean); 和 setLoadMore(boolean); 来控制是否可以刷新和加载更多
->* 4.理论上支持各种Layout,亲测RecyclerView和ListView
->* 5.调用autoRefresh(); 可自动下拉刷新
->* 6.minSdkVersion -> 15
+>* 4.调用autoRefresh(); 可自动下拉刷新
+>* 5.minSdkVersion -> 15
 
 ###如何定制Head和Foot样式
 
