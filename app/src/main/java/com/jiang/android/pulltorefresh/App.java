@@ -14,6 +14,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         PullToRefreshLayout.setHeight(100);
-        PullToRefreshLayout.setFoot(50);
+        PullToRefreshLayout.setFoot(100);
     }
 }
