@@ -32,7 +32,7 @@ Step 2. Add the dependency
 >* 1.继承BaseView 并重写相关方法可实现各种效果。可在PullToRefreshLayout的实例调用setHeadView();setFootView()
 >* 2.可以通过配置高度来决定Head或者Foot的高度。
 ```
-        PullToRefreshLayout.setHeight(100);
+        PullToRefreshLayout.setHeight(100);  //单位为dp
         PullToRefreshLayout.setFoot(100);
 ```
 >* 3.通过setRefresh(boolean); 和 setLoadMore(boolean); 来控制是否可以刷新和加载更多
