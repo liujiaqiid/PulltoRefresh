@@ -26,8 +26,8 @@ public class PullToRefreshLayout extends FrameLayout {
     private static int foot_height;
     private static int foot_height_2;
 
-    private static BaseView mHeadView;
-    private static BaseView mFootView;
+    private BaseView mHeadView;
+    private BaseView mFootView;
     private boolean isRefresh;
     private boolean isLoadMore;
     private float mTouchY;
@@ -72,11 +72,11 @@ public class PullToRefreshLayout extends FrameLayout {
         }
     }
 
-    public static void setHeadView(BaseView view) {
+    public void setHeadView(BaseView view) {
         mHeadView = view;
     }
 
-    public static void setFootView(BaseView view) {
+    public void setFootView(BaseView view) {
         mFootView = view;
     }
 
@@ -99,7 +99,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     private void addFootView() {
         if (mFootView == null) {
-            throw new NullPointerException("footer can not be null");
+            mFootView = new FooterView(getContext());
         }
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         layoutParams.gravity = Gravity.BOTTOM;
@@ -111,7 +111,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     private void addHeadView() {
         if (mHeadView == null) {
-            throw new NullPointerException("header can not be null");
+            mHeadView = new HeadView(getContext());
         }
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         mHeadView.setLayoutParams(layoutParams);

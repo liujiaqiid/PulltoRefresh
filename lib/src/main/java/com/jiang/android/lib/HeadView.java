@@ -1,4 +1,4 @@
-package com.jiang.android.pulltorefresh.view;
+package com.jiang.android.lib;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,10 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
-
-import com.jiang.android.lib.BaseView;
-import com.jiang.android.lib.HeadFootListener;
-import com.jiang.android.lib.Utils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

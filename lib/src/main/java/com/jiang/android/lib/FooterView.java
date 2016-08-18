@@ -1,4 +1,4 @@
-package com.jiang.android.pulltorefresh.view;
+package com.jiang.android.lib;
 
 import android.content.Context;
 import android.graphics.Bitmap;
