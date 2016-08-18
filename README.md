@@ -23,4 +23,4 @@ Step 2. Add the dependency
 
 ###demo:
 
-![](https://raw.githubusercontent.com/jiang111/PulltoRefresh/master/art/111.gif)
+![](https://raw.githubusercontent.com/jiang111/PulltoRefresh/master/art/123.gif)
