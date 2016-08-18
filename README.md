@@ -28,7 +28,7 @@ Step 2. Add the dependency
 
 
 ###说明:
->* 0.图片截取自饿了吗app,如有侵权,请联系删除
+>* 0.图片截取自饿了么app,如有侵权,请联系删除
 >* 1.继承BaseView 并重写相关方法可实现各种效果。可在PullToRefreshLayout的实例调用setHeadView();setFootView()
 >* 2.可以通过配置高度来决定Head或者Foot的高度。
 ```
