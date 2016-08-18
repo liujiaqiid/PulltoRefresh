@@ -1,6 +1,5 @@
 package com.jiang.android.pulltorefresh;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,9 +16,8 @@ import com.jiang.android.lib.BaseRefreshListener;
 import com.jiang.android.lib.PullToRefreshLayout;
 import com.jiang.android.lib.State;
 
-public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "MainActivity";
+public class Main2Activity extends AppCompatActivity {
+    private static final String TAG = "Main2Activity";
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -31,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         manager.setAutoMeasureEnabled(true);
         recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter());
+        recyclerView.setAdapter(new NormalAdapter());
         final PullToRefreshLayout refreshLayout = (PullToRefreshLayout) findViewById(R.id.refresh);
         refreshLayout.setRefreshListener(new BaseRefreshListener() {
             @Override
@@ -46,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshLayout.setFinish(State.REFRESH);
-                        refreshLayout.setFinish(State.LOADMORE);
 
 
                     }
@@ -60,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        refreshLayout.setFinish(State.REFRESH);
                         refreshLayout.setFinish(State.LOADMORE);
                     }
                 }, 2000);
@@ -70,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
             public void finishLoadMore() {
 
                 Log.i(TAG, "finishLoadMore: ");
+                refreshLayout.setLoadMore(false);
+                refreshLayout.setRefresh(true);
 
             }
 
@@ -77,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             public void finish() {
 
                 Log.i(TAG, "finish: ");
+                refreshLayout.setLoadMore(true);
+                refreshLayout.setRefresh(false);
 
             }
         });
@@ -91,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class SimpleStringRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
+    public static class NormalAdapter
+            extends RecyclerView.Adapter<NormalAdapter.ViewHolder> {
 
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        public static class ViewHolder extends RecyclerView.ViewHolder {
 
             public final TextView mTV;
 
@@ -107,39 +107,26 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public SimpleStringRecyclerViewAdapter() {
+        public NormalAdapter() {
             super();
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public NormalAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item, parent, false);
-            return new ViewHolder(view);
+            return new NormalAdapter.ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final NormalAdapter.ViewHolder holder, int position) {
             holder.mTV.setText("第" + position + "项");
-            holder.mTV.setClickable(true);
-            holder.mTV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity();
-                }
-            });
 
         }
-
 
         @Override
         public int getItemCount() {
             return 30;
         }
-    }
-
-    private void startActivity() {
-        startActivity(new Intent(this, Main2Activity.class));
-
     }
 }

@@ -1,4 +1,4 @@
-package com.jiang.android.lib;
+package com.jiang.android.pulltorefresh.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,6 +9,10 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.jiang.android.lib.BaseView;
+import com.jiang.android.lib.HeadFootListener;
+import com.jiang.android.lib.Utils;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -16,20 +20,20 @@ import java.text.NumberFormat;
  * Created by jiang on 16/8/15.
  */
 
-public class HeadFootView extends BaseView implements HeadFootListener {
+public class HeadView extends BaseView implements HeadFootListener {
 
     private Bitmap bitmap;
     private Paint mPaint;
 
-    public HeadFootView(Context context) {
+    public HeadView(Context context) {
         this(context, null);
     }
 
-    public HeadFootView(Context context, AttributeSet attrs) {
+    public HeadView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public HeadFootView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public HeadView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -39,7 +43,7 @@ public class HeadFootView extends BaseView implements HeadFootListener {
     private String text2 = "";
 
     private void init() {
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dd);
+        bitmap = BitmapFactory.decodeResource(getResources(), com.jiang.android.lib.R.drawable.dd);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.RED);

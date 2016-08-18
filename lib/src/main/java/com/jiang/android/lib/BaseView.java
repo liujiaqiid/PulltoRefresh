@@ -21,5 +21,8 @@ public abstract class BaseView extends View implements HeadFootListener {
         super(context, attrs, defStyleAttr);
     }
 
-     static final String TAG = "BaseView";
+    public static final String TAG = "BaseView";
+
+
+
 }
