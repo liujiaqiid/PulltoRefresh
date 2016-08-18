@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jiang.android.lib.BaseRefreshListener;
 import com.jiang.android.lib.PullToRefreshLayout;
+import com.jiang.android.lib.RefreshListener;
 import com.jiang.android.lib.State;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,11 +33,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        manager.setAutoMeasureEnabled(true);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter());
         final PullToRefreshLayout refreshLayout = (PullToRefreshLayout) findViewById(R.id.refresh);
-        refreshLayout.setRefreshListener(new BaseRefreshListener() {
+        refreshLayout.setRefreshListener(new RefreshListener() {
             @Override
             public void refresh() {
                 Log.i(TAG, "refresh: ");
@@ -65,15 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void finishLoadMore() {
+                //可不回调
 
                 Log.i(TAG, "finishLoadMore: ");
-
+                refreshLayout.setLoadMore(false);
+                refreshLayout.setRefresh(true);
             }
 
             @Override
             public void finish() {
-
+                //可不回调
                 Log.i(TAG, "finish: ");
+                refreshLayout.setLoadMore(true);
+                refreshLayout.setRefresh(false);
 
             }
         });
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startActivity() {
-       // startActivity(new Intent(this, Main2Activity.class));
+        // startActivity(new Intent(this, Main2Activity.class));
 
     }
 }
