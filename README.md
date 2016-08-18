@@ -21,6 +21,17 @@ Step 2. Add the dependency
 	}
 ```
 
+
 ###demo:
 
 ![](https://raw.githubusercontent.com/jiang111/PulltoRefresh/master/art/123.gif)
+
+
+###说明:
+>* 1.继承BaseView 并重写相关方法可实现各种效果。
+>* 2.可以通过配置高度来决定Head或者Foot的高度。
+```
+ PullToRefreshLayout.setHeight(100);
+        PullToRefreshLayout.setFoot(100);
+```
+>* 3.通过setRefresh(boolean); 和 setLoadMore(boolean); 来控制是否可以刷新和加载更多
