@@ -3,9 +3,6 @@
 <br />
 a library used to pull to refresh & loadmore
 
-###Demo:
-demo下载地址: https://github.com/jiang111/PulltoRefresh/blob/master/app-release.apk
-
 ###usage:
 Step 1. Add the JitPack repository to your build file
 Add it in your root build.gradle at the end of repositories:
@@ -26,7 +23,7 @@ Step 2. Add the dependency
 
 
 ###demo:
-
+apk下载地址: https://github.com/jiang111/PulltoRefresh/blob/master/app-release.apk
 ![](https://raw.githubusercontent.com/jiang111/PulltoRefresh/master/art/123.gif)
 
 
