@@ -23,7 +23,7 @@ Step 2. Add the dependency
 
 
 ###demo:
-apk下载地址: https://github.com/jiang111/PulltoRefresh/blob/master/app-release.apk
+apk下载地址: https://github.com/jiang111/PulltoRefresh/blob/master/app-release.apk <br />
 ![](https://raw.githubusercontent.com/jiang111/PulltoRefresh/master/art/123.gif)
 
 
